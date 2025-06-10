@@ -145,18 +145,18 @@ bulk UpdateCmrAccessConstraints example
 
 Option 4. Bulk update using scripts:
 
-   1. Logon to elpdvx3 as websvc user.
+   1. Logon to (your server) as websvc user.
    2. cd cumulus-utilities/operations/ops
    3. Modal .env files are in  /home/websvc/cumulus-utilities/config/
    4. Logs will be written to /home/websvc/cumulus-utilities/logs/
    5. Output files will be created in /home/websvc/cumulus-utilities/output/
    6. Verify the cumulus-utilities container is running: 
       a. $ docker ps -a | grep ops_cumulus-utilities-app
-         ec5eb5bffd7f   elpdvx68.cr.usgs.gov:6000/lp-daac-cloud/cumulus/cumulus-utilities/cumulus-utilities-app:ops             "python3"                4 days ago       Up 4 days                                                                                                                                                                       ops_cumulus-utilities-app_1
+         ec5eb5bffd7f   (your server):6000/lp-daac-cloud/cumulus/cumulus-utilities/cumulus-utilities-app:ops             "python3"                4 days ago       Up 4 days                                                                                                                                                                       ops_cumulus-utilities-app_1
    7. Generate the collection files for a provider from CMR. These will contain the concept-id needed to get the granules for a collection. Note that you only need to run this once, unless collections are added to CMR:
       a. $ sh cumulus_utilities_control.sh utility cmr_granule_search_to_file.py --action ACTION --dir DIR [--collfileid COLLFILEID] [--collfile COLLFILE] [--requireToken REQUIRETOKEN] 
          i. ACTION:  populate_collection_file
-         ii. DIR:  /app/output/, the output directory inside the container.   This maps to /home/websvc/cumulus-utilities/output on elpdvx3
+         ii. DIR:  /app/output/, the output directory inside the container.   This maps to /home/websvc/cumulus-utilities/output on (your server)
          iii. COLLFILEID:  This can be a short code of your choosing to identify your files
          iv. REQUIRETOKEN: true to login to CMR with the user identified in the <mode>.env (PROD.env) file under /home/websvc/cumulus-utilities/config, false to query as guest
          v. ex: $ sh cumulus_utilities_control.sh utility cmr_granule_search_to_file.py --action populate_collection_file --dir /app/output --collfileid ACL --requireToken true 
@@ -166,7 +166,7 @@ Option 4. Bulk update using scripts:
          ii. $ cat /home/websvc/cumulus-utilities/output/PROD_<collfileid value>*token.json   ex:  cat /home/websvc/cumulus-utilities/output/PROD_ACL*token.json
       b. $ sh cumulus_utilities_control.sh utility cmr_granule_search_to_file.py --action ACTION --dir DIR [--collfileid COLLFILEID] [--collfile COLLFILE] [--requireToken REQUIRETOKEN] [--pageSize PAGESIZE] [--cmrSearchAfter CMRSEARCHAFTER] [--startDate STARTDATE] [--endDate ENDDATE]
       c. ACTION:  process_collection_file
-      d. DIR:  /app/output/, the output directory inside the container.   This maps to /home/websvc/cumulus-utilities/output on elpdvx3
+      d. DIR:  /app/output/, the output directory inside the container.   This maps to /home/websvc/cumulus-utilities/output on (your server)
       e. COLLFILE:  The name of a collection file that was generated in the previous step
       f. REQUIRETOKEN: true to login to CMR with the user identified in the <mode>.env (PROD.env) file under /home/websvc/cumulus-utilities/config, false to query as guest
       g. PAGESIZE: The number of records to query from CMR in one call (calls will be in a loop). 
@@ -188,7 +188,7 @@ Option 4. Bulk update using scripts:
          ii. META:   "'{\"accessConstraints\":{\"value\":101,\"description\":\"Restricted for limited public release\"}}'"      (enter your own values for the access constraint value and description)
          iii. GRANULELISTFILE: The file created in the previous step which contains a list of granules for a collection
          iv. DATASET: the dataset the GRANULELISTFILE is for.  It will be a shortname and version (which must match shortname and version on the collections tab of the Cumulus Dashboard) joined by 3 underscores. Ex ECO1BGEO___001
-         v. DIR:  /app/output/, the output directory inside the container.   This maps to /home/websvc/cumulus-utilities/output on elpdvx3
+         v. DIR:  /app/output/, the output directory inside the container.   This maps to /home/websvc/cumulus-utilities/output on (your server)
          vi. PERCENT_FAILURE_ACCEPTABLE: The percentage of failed granules in a batch that is acceptable. Default is 2. ex. Using the default of 2%, if more than 2 of 100 granules fail, processing will stop. If you increase it to 10%, if more than 10 of 100 granules fail, processing will stop.
          vii. PERCENT_RUNNING_ACCEPTABLE: The percentage of running granules in a batch that is acceptable before submitting another batch. Default is 0. ex. Using the default of 0%, another batch will not be submitted until all the granules in the current batch are done running. If you set it to 5%, if 5 or less of 100 granules are still running, another batch will be submitted. Otherwise, it will pause and then check again.
          viii. LIMIT: The number of granules to stage in one batch. Default is 20.
